@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <style>
+      .form-box {
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1">
+    <div class="col-md-12 col-xs-12 container form-box">
+      <h1 class="text-center">请核对信息</h1>
+      <form id="form" class="form-horizontal">
+          <fieldset id="form-use" disabled>
+            <% for (let i = 0; i < Object.keys(info).length; i++) { %>
+              
+              <% if(infoMap.get(Object.keys(info)[i]).indexOf('text') > -1) { %>
+                <div class="form-group">
+                  <label><%= infoMap.get(Object.keys(info)[i]).replace('text', '') %></label>
+                  <textarea type="text" rows="10" name="<%= Object.keys(info)[i] %>" class="form-control input-lg col-sm-12" ><%= info[Object.keys(info)[i]] %></textarea>
+                </div>
+                <% } else if (infoMap.get(Object.keys(info)[i]).indexOf('flag') > -1) { %>
+                
+                <% } else { %>
+                
+                <div class="form-group">
+                  <label ><%= infoMap.get(Object.keys(info)[i]) %></label>
+                  <input type="text" name="<%= Object.keys(info)[i] %>" class="form-control input-lg col-sm-12" value="<%= info[Object.keys(info)[i]] %>">
+                </div>
+              <% } %>
+              
+            <% } %>
+          </fieldset>
+      </form>
+      <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-10">
+          <button class="btn btn-default btn-lg col-md-5 col-xs-5" onclick="handleEdit()">修改</button>
+          <button class="btn btn-primary col-md-offset-2 btn-lg col-md-5 col-xs-offset-2 col-xs-5" onclick="handleChange()">提交</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      function handleChange() {
+        if ($('#form-use').attr('disabled')) {
+          alert('请先修改再提交');
+          return
+        }
+        $.ajax({
+          type: 'post',
+          url: '/edit',
+          data: $('#form').serialize(),
+          success: function () {
+            $('#form-use').attr({'disabled': true});
+            alert('修改成功！')
+          },
+          error: function () {
+            alert('修改失败');
+          }
+        })
+      };
+      function handleEdit() {
+        $('#form-use').removeAttr('disabled');
+        $("input[name='uid']").attr('readonly', true);
+        console.log('点击修改');
+      }
+    </script>
+  </body>
+</html>
